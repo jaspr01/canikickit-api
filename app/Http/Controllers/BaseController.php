@@ -11,11 +11,11 @@ class BaseController extends Controller
      * success response method.
      *
      * @param int $status
-     * @param object|null $data
+     * @param mixed $data
      * @param string|null $message
      * @return JsonResponse
      */
-    public function sendResponse(int $status, ?object $data = null, ?string $message = null): JsonResponse
+    public function sendResponse(int $status, mixed $data = null, ?string $message = null): JsonResponse
     {
         $response = [
             'success' => true,
@@ -28,23 +28,21 @@ class BaseController extends Controller
 
 
     /**
-     * return error response.
+     * error response method.
      *
+     * @param int $status
+     * @param string $error
+     * @param array|null $errorMessages
      * @return JsonResponse
      */
-    public function sendError($error, $errorMessages = [], $code = 404)
+    public function sendError(int $status, string $error, array $errorMessages = null): JsonResponse
     {
         $response = [
             'success' => false,
             'message' => $error,
+            ...!empty($errorMessages) ? ['data' => $errorMessages] : [],
         ];
 
-
-        if (!empty($errorMessages)) {
-            $response['data'] = $errorMessages;
-        }
-
-
-        return response()->json($response, $code);
+        return response()->json($response, $status);
     }
 }
