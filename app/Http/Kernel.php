@@ -2,10 +2,19 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\ForceJsonResponse;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Routing\Router;
 
 class Kernel extends HttpKernel
 {
+    public function __construct(Application $app, Router $router)
+    {
+        parent::__construct($app, $router);
+        $this->prependToMiddlewarePriority(ForceJsonResponse::class);
+    }
+
     /**
      * The application's global HTTP middleware stack.
      *
