@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,13 +26,19 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    // Auth
     Route::prefix('auth')->controller(AuthController::class)->group(function () {
         // GET
         Route::get('logout', 'logout');
     });
-    // TODO: Add verify email, reset password, refresh token & logout routes
+    // TODO: Add reset password routes
 
+    // Companies
+    Route::resource('companies', CompanyController::class)->except(['create', 'edit']);
+
+    // Users
     Route::prefix('user')->controller(UserController::class)->group(function () {
         Route::get('/', 'get');
+        Route::get('/{id}', 'getById');
     });
 });
