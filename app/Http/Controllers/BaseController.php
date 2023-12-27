@@ -45,4 +45,17 @@ class BaseController extends Controller
 
         return response()->json($response, $status);
     }
+
+    /**
+     * Sends a 401 unauthenticated response
+     *
+     * @return JsonResponse
+     */
+    public function sendUnauthenticated(): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthenticated.',
+        ], 401);
+    }
 }

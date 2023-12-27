@@ -16,11 +16,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
-    Route::post('register', 'register');
+    // GET
+    Route::get('email/verify/{id}/{hash}', 'verify')->name('verification.verify');
+
+    // POST
     Route::post('login', 'login');
+    Route::post('register', 'register');
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::prefix('auth')->controller(AuthController::class)->group(function () {
+        // GET
+        Route::get('logout', 'logout');
+    });
     // TODO: Add verify email, reset password, refresh token & logout routes
 
     Route::prefix('user')->controller(UserController::class)->group(function () {

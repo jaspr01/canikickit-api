@@ -10,13 +10,14 @@ class UserController extends BaseController
     /**
      * Fetches the authenticated user
      *
+     * @param Request $request
      * @return JsonResponse
      */
     public function get(Request $request): JsonResponse
     {
         try {
             // Fetch the authenticated user
-            $user = auth()->user();
+            $user = $request->user();
 
             // Return the user
             return $this->sendResponse(200, $user);

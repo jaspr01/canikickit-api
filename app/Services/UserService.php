@@ -52,4 +52,15 @@ class UserService
     {
         return User::where('email', $email)->firstOrFail();
     }
+
+    /**
+     * Fetches a user by id
+     *
+     * @param string $id
+     * @return User
+     */
+    public function getUserById(string $id): User
+    {
+        return User::findOrFail($id);
+    }
 }
