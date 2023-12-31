@@ -16,23 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('auth')->controller(AuthController::class)->group(function () {
-    // GET
-    Route::get('email/verify/{id}/{hash}', 'verify')->name('verification.verify');
-
-    // POST
-    Route::post('login', 'login');
-    Route::post('register', 'register');
-});
-
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    // Auth
-    Route::prefix('auth')->controller(AuthController::class)->group(function () {
-        // GET
-        Route::get('logout', 'logout');
-    });
-    // TODO: Add reset password routes
-
     // Companies
     Route::resource('companies', CompanyController::class)->except(['create', 'edit']);
 

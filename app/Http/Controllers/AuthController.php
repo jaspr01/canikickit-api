@@ -29,7 +29,7 @@ class AuthController extends BaseController
     // GET
 
     /**
-     * Handles the GET /auth/email/verify/{id}/{hash} request
+     * Handles the POST /email/verify/{id}/{hash} request
      *
      * @param EmailVerificationRequest $request
      * @return JsonResponse
@@ -63,7 +63,7 @@ class AuthController extends BaseController
     }
 
     /**
-     * Handles the GET /auth/logout request
+     * Handles the POST /logout request
      *
      * @param Request $request
      * @return JsonResponse
@@ -71,8 +71,8 @@ class AuthController extends BaseController
     public function logout(Request $request): JsonResponse
     {
         try {
-            // Delete the user's token
-            $request->user()->currentAccessToken()->delete();
+            // Logout the user
+            auth()->logout();
 
             // Return success response 200
             return $this->sendResponse(200);
@@ -84,7 +84,7 @@ class AuthController extends BaseController
     // POST
 
     /**
-     * Handles the POST /auth/login request
+     * Handles the POST /login request
      *
      * @param LoginRequest $request
      * @return JsonResponse
@@ -92,29 +92,20 @@ class AuthController extends BaseController
     public function login(LoginRequest $request): JsonResponse
     {
         try {
-            // Fetch the user for the given email
-            $user = $this->userService->getUserByEmail($request->email);
+            if (auth()->attempt($request->only('email', 'password'))) {
+                $request->session()->regenerate();
 
-            // Check if passwords match
-            if (!password_verify($request->password, $user->password)) {
-                return $this->sendError(401, 'Invalid credentials');
+                return $this->sendResponse(200);
             }
 
-            // Delete all the user's previous tokens (if any)
-            $user->tokens()->delete();
-
-            // Generate the access_token for the authenticated user
-            $token = $this->userService->createUserAccessToken($user);
-
-            // Return the access_token
-            return $this->sendResponse(200, ['access_token' => $token]);
+            return $this->sendError(401, 'Invalid credentials');
         } catch (\Exception $e) {
             return $this->sendError(500, $e->getMessage());
         }
     }
 
     /**
-     * Handles the POST /auth/register request
+     * Handles the POST /register request
      *
      * @param RegisterRequest $request
      * @return JsonResponse
